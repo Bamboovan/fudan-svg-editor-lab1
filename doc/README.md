@@ -43,11 +43,11 @@ Command 将用户操作封装成对象；Composite 让容器与叶子统一接�
 
 ## 一致性自查
 
-实现完成后补充实际检查结果。
+实际目录与方案一致；完整依赖矩阵和一类一文件扫描通过，详见下文自动化检查。
 
 ## 质量保证手段
 
-将通过类型检查、单元/集成测试、CLI 脚本回放、SVG XML 读写往返与架构依赖检查验证，完成后记录实际结果。
+已通过类型检查、23项自动化测试、CLI 脚本回放、SVG XML 读写往返与架构依赖检查，实际结果见末节。
 
 ### 实际迭代补充（2026-11-01 UTC）
 
@@ -75,3 +75,25 @@ Command 将用户操作封装成对象；Composite 让容器与叶子统一接�
 ### 交付与诚实性
 
 仓库为 https://github.com/Bamboovan/fudan-svg-editor-lab1 。本地 git 身份仅仓库级配置为 OpenAI Codex，未修改全局配置。开发采用真实分步提交，无重写旧日期；原截止时间 2026-10-31 23:59（北京时间）已过，不能声称按时完成。远程发布和 final 标签以实际完成时间为准。
+
+发布说明：云执行环境没有 GitHub git 凭据，常规 `git ls-remote` 失败。远程通过已授权 GitHub connector 重放真实本地分步提交的快照与顺序，因此远程提交 SHA / 创建时间与本地不同；不是声称直接 git push 或伪造早期历史。全部时间均为实际时间，未 backdate。
+
+
+### 最终本地验证结果（2026-11-01 UTC）
+
+环境：Node.js v24.22.1，npm 11.9.0。
+
+| 检查 | 实际结果 |
+|---|---|
+| `npm ci --cache /tmp/svg-npm-cache` | 成功，基于锁文件干净安装 |
+| `npm run typecheck` | 通过，严格 TS |
+| `npm test` | **23/23 通过**，无跳过、无失败 |
+| `npm run build` | 通过，产物 dist/ |
+| `npm run format:check` | 全部通过 |
+| `npm run check` | 上述四项组合全部通过 |
+| `npm audit --json --cache /tmp/svg-npm-cache` | 已知漏洞总数 0（该次查询结果，不保证未来） |
+| 教师流程图实际子进程回放 | 成功，保存 8 元素，读回核验 undo 后几何与更新后文字 |
+
+测试分布：独立验收9项、架构1项、CLI/分词2项、XML/文件6项、模型5项。覆盖所有命令族、六种图形、浮点几何、深层 Composite、错误精确前缀、ID冲突、循环拒绝、失败原子性、undo/redo边界、z-order、文本转义和 XML 空白保真。此为真实 AI 独立检查，不代表学生已经人工验收。
+
+`.github/workflows/ci.yml` 配置 Node.js 22/24 的同一检查。此文档记录的是本地实际通过；远程 CI 是否完成需以 GitHub 对应提交的运行记录为准。
