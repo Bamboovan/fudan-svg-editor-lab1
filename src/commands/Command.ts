@@ -10,7 +10,10 @@ export abstract class Command {
       throw new Error("invalid arguments");
   }
   protected number(value: string, positive = false): number {
-    if (value.trim() === "" || !Number.isFinite(Number(value)))
+    if (
+      !/^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(value) ||
+      !Number.isFinite(Number(value))
+    )
       throw new Error(`invalid number: ${value}`);
     const n = Number(value);
     if (positive && n <= 0) throw new Error("value must be positive");
